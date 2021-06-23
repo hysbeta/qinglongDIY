@@ -450,3 +450,7 @@ export_all_codes | perl -pe "{s|京东种豆|种豆|; s|crazyJoy任务|疯狂的
 echo "#!/usr/bin/env bash" > /ql/config/task_before.sh
 cat "/ql/log/code/"`ls -lt /ql/log/code | grep ".log" | head -n 1 |awk '{print $9}'` >> /ql/config/task_before.sh
 cat "/ql/config/task_before_template.sh" >> /ql/config/task_before.sh
+
+chmod 0777 /ql/config/code.sh
+chmod 0777 /ql/config/task_after.sh
+chmod 0777 /ql/config/task_before.sh
