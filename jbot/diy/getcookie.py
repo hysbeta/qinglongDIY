@@ -1,3 +1,4 @@
+import os
 from telethon import events, Button
 import requests
 import re
