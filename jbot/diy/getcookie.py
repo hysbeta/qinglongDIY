@@ -162,7 +162,8 @@ async def my_cookie(event):
                 parseJDCookies(resp.headers)
                 await jdbot.delete_messages(chat_id, cookiemsg)
                 await jdbot.send_message(chat_id, '以下为获取到的cookie')
-                await jdbot.send_message(chat_id, jd_cookie)    i = 1
+                await jdbot.send_message(chat_id, jd_cookie)
+                i = 1
                 #分离收到的pt_pin用于匹配
                 pt_pin = jd_cookie.split(";")[1]
                 #区分Docker类型，若ql脚本存在则默认为QL docker，否则默认为v4
