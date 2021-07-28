@@ -4,8 +4,7 @@ import re
 import time
 import qrcode
 from asyncio import exceptions
-from .. import jdbot, chat_id, img_file, mybot, chname
-from .utils import press_event
+from .. import jdbot, chat_id, img_file, mybot, chname, utils
 
 cookiemsg = ''
 # 扫码获取cookie 直接采用LOF大佬代码
@@ -126,7 +125,7 @@ async def my_cookie(event):
                       Button.inline("取消", data='cancel')]
             await jdbot.delete_messages(chat_id, msg)
             cookiemsg = await jdbot.send_message(chat_id, '30s内点击取消将取消本次操作\n如不取消，扫码结果将于30s后显示\n扫码后不想等待点击已扫码', file=img_file, buttons=markup)
-            convdata = await conv.wait_event(press_event(SENDER))
+            convdata = await conv.wait_event(utils.press_event(SENDER))
             res = bytes.decode(convdata.data)
             if res == 'cancel':
                 login = False
