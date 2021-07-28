@@ -5,7 +5,7 @@ import time
 import qrcode
 from asyncio import exceptions
 from .. import jdbot, chat_id, img_file, mybot, chname
-from ../bot import utils
+from . import utils
 
 cookiemsg = ''
 # 扫码获取cookie 直接采用LOF大佬代码
