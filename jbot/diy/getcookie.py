@@ -162,8 +162,51 @@ async def my_cookie(event):
                 parseJDCookies(resp.headers)
                 await jdbot.delete_messages(chat_id, cookiemsg)
                 await jdbot.send_message(chat_id, '以下为获取到的cookie')
-                await jdbot.send_message(chat_id, jd_cookie)
-                updateCookie(jd_cookie)
+                await jdbot.send_message(chat_id, jd_cookie)    i = 1
+                #分离收到的pt_pin用于匹配
+                pt_pin = jd_cookie.split(";")[1]
+                #区分Docker类型，若ql脚本存在则默认为QL docker，否则默认为v4
+                if os.path.exists('/usr/local/bin/ql'):
+                    #加载config.sh文件内容
+                    config = open(_CookiesDB, 'r', encoding='utf-8').readlines()
+                    config_text = open(_CookiesDB, 'r', encoding='utf-8').read()
+                    for record in config:
+                        if record.strip() is not None:
+                            i = i + 1
+                    if pt_pin in config_text:
+                        for line in config:
+                            if pt_pin in line:
+                                config[config.index(line)] = line.replace(line.split("\"")[3], jd_cookie)
+                        try:
+                            open(_CookiesDB, 'w+', encoding='utf-8').writelines(config)
+                            await jdbot.send_message(chat_id,"更新"+str(pt_pin)+"的Cookies成功！当前共有："+str(i-1)+"个Cookies")
+                        except Exception as error:
+                            await jdbot.send_message(chat_id,"更新"+str(pt_pin)+"的Cookies失败，请重试！")
+                    else:
+                        # 由于没搞明白_CookiesDB里面的_id是怎么生成的，所以不支持增加新Cookies
+                        await jdbot.send_message(chat_id,"Cookies:"+str(pt_pin)+"不存在，请先在面板添加！")
+                    os.system("/usr/local/bin/pm2 reload all")
+                else:
+                    #加载config.sh文件内容
+                    config = open(_config, 'r', encoding='utf-8').readlines()
+                    config_text = open(_config, 'r', encoding='utf-8').read()
+                    while "Cookie" + str(i) in config_text:
+                        i = i + 1
+                    if pt_pin in config_text:
+                        for line in config:
+                            if pt_pin in line:
+                                config[config.index(line)] = line.replace(line.split("\"")[1], jd_cookie)
+                        try:
+                            open(_config, 'w+', encoding='utf-8').writelines(config)
+                            await jdbot.send_message(chat_id,"更新"+str(pt_pin)+"的Cookies成功！当前共有："+str(i-1)+"个Cookies")
+                        except Exception as error:
+                            await jdbot.send_message(chat_id,"更新"+str(pt_pin)+"的Cookies失败，请重试！")
+                    else:
+                        try:
+                            open(_config, 'a', encoding='utf-8').write('\n' + "Cookie" + str(i) + "=\"" + jd_cookie + "\"")
+                            await jdbot.send_message(chat_id,"添加"+str(pt_pin)+"的Cookies成功！当前共有："+str(i)+"个Cookies")
+                        except Exception as error:
+                            await jdbot.send_message(chat_id,"添加"+str(pt_pin)+"的Cookies失败，请重试！")
                 return
             if data.get("errcode") == 21:
                 await jdbot.delete_messages(chat_id, cookiemsg)
@@ -175,53 +218,6 @@ async def my_cookie(event):
                 return
     except Exception as e:
         await jdbot.send_message(chat_id, f'something wrong,I\'m sorry\n{str(e)}')
-
-def updateCookie(jd_cookie):
-    i = 1
-    #分离收到的pt_pin用于匹配
-    pt_pin = jd_cookie.split(";")[1]
-    #区分Docker类型，若ql脚本存在则默认为QL docker，否则默认为v4
-    if os.path.exists('/usr/local/bin/ql'):
-        #加载config.sh文件内容
-        config = open(_CookiesDB, 'r', encoding='utf-8').readlines()
-        config_text = open(_CookiesDB, 'r', encoding='utf-8').read()
-        for record in config:
-            if record.strip() is not None:
-                i = i + 1
-        if pt_pin in config_text:
-            for line in config:
-                if pt_pin in line:
-                    config[config.index(line)] = line.replace(line.split("\"")[3], jd_cookie)
-            try:
-                open(_CookiesDB, 'w+', encoding='utf-8').writelines(config)
-                await jdbot.send_message(chat_id,"更新"+str(pt_pin)+"的Cookies成功！当前共有："+str(i-1)+"个Cookies")
-            except Exception as error:
-                await jdbot.send_message(chat_id,"更新"+str(pt_pin)+"的Cookies失败，请重试！")
-        else:
-            # 由于没搞明白_CookiesDB里面的_id是怎么生成的，所以不支持增加新Cookies
-            await jdbot.send_message(chat_id,"Cookies:"+str(pt_pin)+"不存在，请先在面板添加！")
-        os.system("/usr/local/bin/pm2 reload all")
-    else:
-        #加载config.sh文件内容
-        config = open(_config, 'r', encoding='utf-8').readlines()
-        config_text = open(_config, 'r', encoding='utf-8').read()
-        while "Cookie" + str(i) in config_text:
-            i = i + 1
-        if pt_pin in config_text:
-            for line in config:
-                if pt_pin in line:
-                    config[config.index(line)] = line.replace(line.split("\"")[1], jd_cookie)
-            try:
-                open(_config, 'w+', encoding='utf-8').writelines(config)
-                await jdbot.send_message(chat_id,"更新"+str(pt_pin)+"的Cookies成功！当前共有："+str(i-1)+"个Cookies")
-            except Exception as error:
-                await jdbot.send_message(chat_id,"更新"+str(pt_pin)+"的Cookies失败，请重试！")
-        else:
-            try:
-                open(_config, 'a', encoding='utf-8').write('\n' + "Cookie" + str(i) + "=\"" + jd_cookie + "\"")
-                await jdbot.send_message(chat_id,"添加"+str(pt_pin)+"的Cookies成功！当前共有："+str(i)+"个Cookies")
-            except Exception as error:
-                await jdbot.send_message(chat_id,"添加"+str(pt_pin)+"的Cookies失败，请重试！")
                 
 if chname:
     jdbot.add_event_handler(my_cookie, events.NewMessage(
