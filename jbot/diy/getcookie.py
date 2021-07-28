@@ -7,7 +7,8 @@ import qrcode
 from asyncio import exceptions
 from .. import jdbot, chat_id, img_file, mybot, chname
 from . import utils
-
+_config = _ConfigDir + '/config.sh'
+_CookiesDB = '/ql/db/env.db'
 cookiemsg = ''
 # 扫码获取cookie 直接采用LOF大佬代码
 # getSToken请求获取，s_token用于发送post请求是的必须参数
