@@ -5,7 +5,7 @@ import re
 import time
 import qrcode
 from asyncio import exceptions
-from .. import jdbot, chat_id, img_file, mybot, chname
+from .. import jdbot, chat_id, _ConfigDir, img_file, mybot, chname
 from . import utils
 _config = _ConfigDir + '/config.sh'
 _CookiesDB = '/ql/db/env.db'
